@@ -1,4 +1,7 @@
 {
+  "name": "tp3-airascalerin",
+  "version": "1.0.0",
+  "type": "module",
   "dependencies": {
     "@grpc/grpc-js": "^1.11.3",
     "@grpc/proto-loader": "^0.7.13",

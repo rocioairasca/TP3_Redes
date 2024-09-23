@@ -19,7 +19,7 @@ const simpleProto = grpc.loadPackageDefinition(packageDefinition).SimpleService;
 const client = new simpleProto('localhost:50051', grpc.credentials.createInsecure());
 
 // Llammo  a la funcion que suma... los numeros aqui estan hardcodeados...
-client.Add({ number1: 14, number2: 16 }, (error, response) => {
+client.Add({ number1: 3, number2: 2 }, (error, response) => {
   if (!error) {
     console.log('Resultado:', response.result);
   } else {
