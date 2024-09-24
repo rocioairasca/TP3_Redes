@@ -59,6 +59,58 @@ app.post('/tareas', async (req, res) => {
   }
 });
 
+// Endpoint para obtener todas las tareas
+app.get('/tareas', async (req, res) => {
+    try {
+      const tareas = await Tarea.find(); // Busca todas las tareas en la colección
+      res.status(200).json(tareas);
+    } catch (error) {
+      console.error('Error al obtener las tareas:', error);
+      res.status(500).json({ message: 'Error al obtener las tareas' });
+    }
+});
+
+// Endpoint para eliminar una tarea por _id
+app.delete('/tareas/:_id', async (req, res) => {
+    try {
+      const tareaEliminada = await Tarea.findByIdAndDelete(req.params._id);
+      if (!tareaEliminada) {
+        return res.status(404).json({ message: 'Tarea no encontrada' });
+      }
+      res.status(200).json({ message: 'Tarea eliminada correctamente', tarea: tareaEliminada });
+    } catch (error) {
+      console.error('Error al eliminar la tarea:', error);
+      res.status(500).json({ message: 'Error al eliminar la tarea' });
+    }
+});
+
+// Endpoint para actualizar el estado de una tarea por _id
+app.patch('/tareas/:_id/estado', async (req, res) => {
+    const { estado } = req.body; // Obtener el nuevo estado del cuerpo de la solicitud
+  
+    // Validar el estado
+    if (!estado || !['pendiente', 'en progreso', 'completada'].includes(estado)) {
+      return res.status(400).json({ message: 'Estado inválido. Debe ser "pendiente", "en progreso" o "completada".' });
+    }
+  
+    try {
+      const tareaActualizada = await Tarea.findByIdAndUpdate(
+        req.params._id,
+        { estado }, // Actualizar solo el estado
+        { new: true, runValidators: true } // `new: true` devuelve el documento actualizado
+      );
+  
+      if (!tareaActualizada) {
+        return res.status(404).json({ message: 'Tarea no encontrada' });
+      }
+  
+      res.status(200).json({ message: 'Estado de la tarea actualizado correctamente', tarea: tareaActualizada });
+    } catch (error) {
+      console.error('Error al actualizar el estado de la tarea:', error);
+      res.status(500).json({ message: 'Error al actualizar el estado de la tarea' });
+    }
+});  
+
 app.listen(PORT2, () => {
     console.log(`El microservicio Rest esta corriendo en el puerto ${PORT2}`);
 });
