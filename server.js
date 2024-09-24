@@ -1,6 +1,12 @@
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
 import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
 import path from 'path';
+
+const cors = require('cors');
+app.use(cors());
 
 const PROTO_PATH = path.join(process.cwd(), 'simple.proto');
 
