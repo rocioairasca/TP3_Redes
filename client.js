@@ -13,16 +13,34 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true,
 });
 
-const simpleProto = grpc.loadPackageDefinition(packageDefinition).SimpleService;
+const taskProto = grpc.loadPackageDefinition(packageDefinition).TaskService;
 
 // Creo un cliente gRPC
-const client = new simpleProto('localhost:50051', grpc.credentials.createInsecure());
+const client = new taskProto('localhost:50051', grpc.credentials.createInsecure());
 
-// Llammo  a la funcion que suma... los numeros aqui estan hardcodeados...
-client.Add({ number1: 3, number2: 2 }, (error, response) => {
+// Funcion para obtener el promedio de tareas completadas
+client.GetCompletedTasksAverage({}, (error, response) => {
   if (!error) {
-    console.log('Resultado:', response.result);
+    console.log('Promedio de tareas completadas:', response.average);
   } else {
-    console.error('Error:', error);
+    console.error('Error al obtener el promedio de tareas completadas:', error);
+  }
+});
+
+// Funcion para obtener el promedio de tareas pendientes
+client.GetPendingTasksAverage({}, (error, response) => {
+  if (!error) {
+    console.log('Promedio de tareas pendientes:', response.average);
+  } else {
+    console.error('Error al obtener promedio de tareas pendientes:', error);
+  }
+});
+
+// Funcion para obtener el promedio de tareas en progreso
+client.GetInProgressTasksAverage({}, (error, response) => {
+  if (!error) {
+    console.log('Promedio de tareas en progreso:', response.average);
+  } else {
+    console.error('Error al obtener promedio de tareas en progreso:', error);
   }
 });
