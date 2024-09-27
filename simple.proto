@@ -4,10 +4,15 @@ service TaskService {
   rpc GetCompletedTasksAverage (EmptyRequest) returns (AverageResponse);
   rpc GetPendingTasksAverage (EmptyRequest) returns (AverageResponse);
   rpc GetInProgressTasksAverage (EmptyRequest) returns (AverageResponse);
+   rpc GetTotalTasks (EmptyRequest) returns (TotalResponse);
 }
 
 message EmptyRequest {}
 
 message AverageResponse {
   float average = 1;
+}
+
+message TotalResponse {
+  int32 total = 1; // Campo para devolver el total de tareas
 }

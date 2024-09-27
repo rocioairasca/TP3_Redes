@@ -18,10 +18,19 @@ const taskProto = grpc.loadPackageDefinition(packageDefinition).TaskService;
 // Creo un cliente gRPC
 const client = new taskProto('localhost:50051', grpc.credentials.createInsecure());
 
+// Función para obtener el total de tareas
+client.GetTotalTasks({}, (error, response) => {
+  if (!error) {
+    console.log('Total de tareas:', response.total);
+  } else {
+    console.error('Error al obtener el total de tareas:', error);
+  }
+});
+
 // Funcion para obtener el promedio de tareas completadas
 client.GetCompletedTasksAverage({}, (error, response) => {
   if (!error) {
-    console.log('Promedio de tareas completadas:', response.average);
+    console.log('Porcentaje de tareas completadas:', response.average, "%");
   } else {
     console.error('Error al obtener el promedio de tareas completadas:', error);
   }
@@ -30,7 +39,7 @@ client.GetCompletedTasksAverage({}, (error, response) => {
 // Funcion para obtener el promedio de tareas pendientes
 client.GetPendingTasksAverage({}, (error, response) => {
   if (!error) {
-    console.log('Promedio de tareas pendientes:', response.average);
+    console.log('Porcentaje de tareas pendientes:', response.average, "%");
   } else {
     console.error('Error al obtener promedio de tareas pendientes:', error);
   }
@@ -39,7 +48,7 @@ client.GetPendingTasksAverage({}, (error, response) => {
 // Funcion para obtener el promedio de tareas en progreso
 client.GetInProgressTasksAverage({}, (error, response) => {
   if (!error) {
-    console.log('Promedio de tareas en progreso:', response.average);
+    console.log('Porcentaje de tareas en progreso:', response.average, "%");
   } else {
     console.error('Error al obtener promedio de tareas en progreso:', error);
   }

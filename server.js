@@ -15,43 +15,54 @@ const taskProto = grpc.loadPackageDefinition(packageDefinition);
 
 const REST_API_URL = 'http://localhost:3001/tareas';
 
-function fetchTasks() {
+async function fetchTasks() {
   try {
-    const response = axios.get(REST_API_URL);
-    return response.data;
+    const response = await axios.get(REST_API_URL);
+    console.log(response);
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error('Error al obtener las tareas de MicroREST:', error);
     throw new Error('Error al obtener las tareas');
   }
 }
 
-function getCompletedTasksAverage(call, callback) {
+async function getTotalTasks(call, callback) {
   try {
-    const tasks = fetchTasks();
+    const tasks = await fetchTasks();
+    const total = tasks.length;
+    callback(null, { total });
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
+async function getCompletedTasksAverage(call, callback) {
+  try {
+    const tasks = await fetchTasks();
     const completedTasks = tasks.filter(task => task.estado === 'completada');
-    const average = completedTasks.length / tasks.length;
+    const average = (completedTasks.length / tasks.length) * 100 || 0;
     callback(null, { average });
   } catch (error) {
     callback(error, null);
   }
 }
 
-function getPendingTaskAverage(call, callback) {
+async function getPendingTaskAverage(call, callback) {
   try {
-    const tasks = fetchTasks();
+    const tasks = await fetchTasks();
     const pendingTasks = tasks.filter(task => task.estado === 'pendiente');
-    const average = pendingTasks.length / tasks.length;
+    const average = (pendingTasks.length / tasks.length) * 100 || 0;
     callback(null, { average });
   } catch (error) {
     callback(error, null);
   }
 }
 
-function getInProgressTasksAverage(call, callback) {
+async function getInProgressTasksAverage(call, callback) {
   try {
-    const tasks = fetchTasks();
-    const inProgressTasks = task.filter(task => task.estado === 'en progreso');
-    const average = inProgressTasks.length / tasks.length;
+    const tasks = await fetchTasks();
+    const inProgressTasks = tasks.filter(task => task.estado === 'en progreso');
+    const average = (inProgressTasks.length / tasks.length) * 100 || 0;
     callback(null, { average });
   } catch (error) {
     callback(error, null);
@@ -64,6 +75,7 @@ function main() {
     GetCompletedTasksAverage: getCompletedTasksAverage,
     GetPendingTasksAverage: getPendingTaskAverage,
     GetInProgressTasksAverage: getInProgressTasksAverage,
+    GetTotalTasks: getTotalTasks,
   });
   server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () => {
     console.log('Servidor gRPC escuchando en el puerto 50051');
