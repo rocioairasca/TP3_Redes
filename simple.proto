@@ -1,14 +1,13 @@
 syntax = "proto3";
 
-service SimpleService {
-  rpc Add (AddRequest) returns (AddResponse);
+service TaskService {
+  rpc GetCompletedTasksAverage (EmptyRequest) returns (AverageResponse);
+  rpc GetPendingTasksAverage (EmptyRequest) returns (AverageResponse);
+  rpc GetInProgressTasksAverage (EmptyRequest) returns (AverageResponse);
 }
 
-message AddRequest {
-  int32 number1 = 1;
-  int32 number2 = 2;
-}
+message EmptyRequest {}
 
-message AddResponse {
-  int32 result = 1;
+message AverageResponse {
+  float average = 1;
 }
