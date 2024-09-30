@@ -1,9 +1,13 @@
+// importacion de librerias
 import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
 import path from 'path';
 import axios from 'axios';
 
+// importacion del .proto
 const PROTO_PATH = path.join(process.cwd(), 'simple.proto');
+
+// Cargar el archivo .proto desde PROTO_PATH usando la funcion loadSync de ProtoLoader
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -11,10 +15,15 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   defaults: true,
   oneofs: true,
 });
+
+// convierte el objeto packageDefinition en un formato que pueda ser utilizado por gRPC usando loadPackageDefinition
+// una vez cargado packageDefinition, extrae el servicio TaskService de nuestro .proto y lo define como taskProto
 const taskProto = grpc.loadPackageDefinition(packageDefinition);
 
+// definimos la URL de nuestro microservicio REST
 const REST_API_URL = 'http://localhost:3001/tareas';
 
+// funcion que obtiene las tareas desde la API con una solicitud GET
 async function fetchTasks() {
   try {
     const response = await axios.get(REST_API_URL);
@@ -26,6 +35,7 @@ async function fetchTasks() {
   }
 }
 
+// funcion que obtiene el numero total de tareas existentes en nuestra BD
 async function getTotalTasks(call, callback) {
   try {
     const tasks = await fetchTasks();
@@ -36,6 +46,7 @@ async function getTotalTasks(call, callback) {
   }
 }
 
+// funcion que obtiene el numero total de tareas en estado "completada"
 async function getCompletedTasksAverage(call, callback) {
   try {
     const tasks = await fetchTasks();
@@ -47,6 +58,7 @@ async function getCompletedTasksAverage(call, callback) {
   }
 }
 
+// funcion que obtiene el numero total de tareas en estado "pendiente"
 async function getPendingTaskAverage(call, callback) {
   try {
     const tasks = await fetchTasks();
@@ -58,6 +70,7 @@ async function getPendingTaskAverage(call, callback) {
   }
 }
 
+// funcion que obtiene el numero total de tareas en estado "en progreso"
 async function getInProgressTasksAverage(call, callback) {
   try {
     const tasks = await fetchTasks();
@@ -69,6 +82,7 @@ async function getInProgressTasksAverage(call, callback) {
   }
 }
 
+// funcion principal que instancia el servidor gRPC y registra las funciones dentro de nuestro servicio taskProto/TaskService
 function main() {
   const server = new grpc.Server();
   server.addService(taskProto.TaskService.service, { 
@@ -77,9 +91,12 @@ function main() {
     GetInProgressTasksAverage: getInProgressTasksAverage,
     GetTotalTasks: getTotalTasks,
   });
+
+  // aca crea el servidor gRPC en la IP especificada, con credenciales no cifradas
   server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () => {
     console.log('Servidor gRPC escuchando en el puerto 50051');
   });
 }
 
+// llamada a la funcion para iniciar el servidor
 main();

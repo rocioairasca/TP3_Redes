@@ -1,10 +1,12 @@
+// importacion de librerias
 import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
 import path from 'path';
 
+// importacion del .proto
 const PROTO_PATH = path.join(process.cwd(), 'simple.proto');
 
-// Cargar el archivo .proto
+// Cargar el archivo .proto desde PROTO_PATH usando la funcion loadSync de ProtoLoader
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -13,9 +15,11 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true,
 });
 
+// convierte el objeto packageDefinition en un formato que pueda ser utilizado por gRPC usando loadPackageDefinition
+// una vez cargado packageDefinition, extrae el servicio TaskService de nuestro .proto y lo define como taskProto
 const taskProto = grpc.loadPackageDefinition(packageDefinition).TaskService;
 
-// Creo un cliente gRPC
+// aca crea el cliente gRPC en la direccion especificada, con credenciales no cifradas, apuntando a nuestro servicio taskProto
 const client = new taskProto('localhost:50051', grpc.credentials.createInsecure());
 
 // Función para obtener el total de tareas

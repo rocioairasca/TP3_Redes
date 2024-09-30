@@ -1,18 +1,32 @@
+// define la version de Protobuf que vamos a utilizar
 syntax = "proto3";
 
+// definimos el servicio TaskService con 4 procedimientos remotos para que los clientes puedan invocarlos
 service TaskService {
+  /*
+    Con rpc nosotros definimos la funcion
+    Con EmptyRequest indicamos que la funcion no requiere parametros en la consulta
+    Finalmente, con returns (nombreRespuesta) le indicamos qué parametros se enviaran en la respuesta
+  */
   rpc GetCompletedTasksAverage (EmptyRequest) returns (AverageResponse);
   rpc GetPendingTasksAverage (EmptyRequest) returns (AverageResponse);
   rpc GetInProgressTasksAverage (EmptyRequest) returns (AverageResponse);
-   rpc GetTotalTasks (EmptyRequest) returns (TotalResponse);
+  rpc GetTotalTasks (EmptyRequest) returns (TotalResponse);
 }
 
-message EmptyRequest {}
+/*
+  esto es literalmente solo un marcador que indica que se esta enviando una solicitud.
+  este tipo de mensaje se usa cuando llamamos a un metodo que no requiere parametros.
+  ¿se podra usar tambien para respuestas? imagino que no tiene sentido no devolver nada, pero la duda existe :>
+*/
+message EmptyRequest {} 
 
+// define un mensaje AverageResponse con atributo average de tipo float, con indice 1.
 message AverageResponse {
   float average = 1;
 }
 
+// del mismo modo, con TotalResponse, se define un campo de nombre total, de tipo entero de 32 bits, con indice/numero de campo 1.
 message TotalResponse {
-  int32 total = 1; // Campo para devolver el total de tareas
+  int32 total = 1;
 }
