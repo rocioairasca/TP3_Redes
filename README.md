@@ -39,8 +39,12 @@ npm install
 **Archivo .env**
 
 # URL de la conexión a MongoDB
+```bash
 DB_URI="mongodb+srv://roairasca:rocio1234@tp3redes.q08xn.mongodb.net/"
+```
 
 # Puertos de conexión para el API REST
+```bash
 PORT=3000
 PORT2=3001
+```
